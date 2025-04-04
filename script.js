@@ -321,6 +321,27 @@ const showPaperContent = (content) => {
     showElement(downloadPdfBtn);
 };
 
+// Check login status - redirect to login if not logged in
+const checkLoginStatus = () => {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+        window.location.href = 'login.html';
+    }
+};
+
+// Handle logout
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        // Clear session storage
+        sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('currentUser');
+        
+        // Redirect to login page
+        window.location.href = 'login.html';
+    });
+}
+
 // Event Handlers
 examForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -362,8 +383,20 @@ downloadPdfBtn.addEventListener('click', generatePDF);
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is logged in
+    checkLoginStatus();
+    
     hideElement(loadingIndicator);
     hideElement(examContent);
     hideElement(downloadPdfBtn);
     hideElement(errorMessage);
-}); 
+    
+    // Display username if logged in
+    const currentUser = sessionStorage.getItem('currentUser');
+    if (currentUser) {
+        const userInfo = document.getElementById('userInfo');
+        if (userInfo) {
+            userInfo.textContent = `Welcome, ${currentUser}`;
+        }
+    }
+});
